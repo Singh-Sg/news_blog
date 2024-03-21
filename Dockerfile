@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.9
+FROM python:3.10
 
 # Set environment variables for PostgreSQL
 ENV POSTGRES_USER=postgres
@@ -23,9 +23,8 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run makemigrations and migrate commands, and create superuser
-RUN python manage.py makemigrations news && \
-    python manage.py migrate && \
-    sh admin-setup.sh
+RUN python manage.py makemigrations news 
+RUN python manage.py migrate
 
 # Expose the port number that the Django development server will listen on
 EXPOSE 8000

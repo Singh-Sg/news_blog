@@ -79,8 +79,12 @@ WSGI_APPLICATION = 'new_filer.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'news_database',  
+        'USER': 'postgres',       
+        'PASSWORD': 'postgres',   
+        'HOST': 'db',             
+        'PORT': '5432',
     }
 }
 
@@ -144,15 +148,15 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BEAT_SCHEDULE = {
     'run-every-morning': {
         'task': 'news.tasks.find_news_everything',
-        # 'schedule': crontab(hour=0, minute=0),  # Run every day at midnight
-        'schedule': crontab("*"),  # Run every day at midnight
+        'schedule': crontab(hour=0, minute=0),  # Run every day at midnight
+        # 'schedule': crontab("*"),  # Run every day at midnight
 
     },
 
     'run-every-morning_top_news': {
         'task': 'news.tasks.find_top_headlines',
-        # 'schedule': crontab(hour=0, minute=0),  # Run every day at midnight
-        'schedule': crontab("*"),  # Run every day at midnight
+        'schedule': crontab(hour=0, minute=0),  # Run every day at midnight
+        # 'schedule': crontab("*"),  # Run every day at midnight
 
     },
 }

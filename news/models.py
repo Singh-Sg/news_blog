@@ -18,7 +18,7 @@ class News(models.Model):
     """
     search_term = models.ForeignKey(SearchTerm, on_delete=models.CASCADE, related_name='news_articles')
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     source = models.CharField(max_length=100)  # Source of the news article
     author = models.CharField(max_length=255, null=True, blank=True)  # Author of the news article (optional)
     news_url = models.URLField(null=True, blank=True)  # URL of the news article
