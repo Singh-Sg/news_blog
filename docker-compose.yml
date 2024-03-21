@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  # Django web service
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=news_database
+      - DJANGO_SETTINGS_MODULE=new_filer.settings
+
+  # PostgreSQL database service
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: news_database
+
+  # Redis service
+  redis:
+    image: redis:latest
+    restart: always
+
+  # Celery worker service
+  worker:
+    build: .
+    command: celery -A new_filer worker --loglevel=info
+    depends_on:
+      - web
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=news_database
+      - DJANGO_SETTINGS_MODULE=new_filer.settings
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+  # Celery beat service
+  beat:
+    build: .
+    command: celery -A new_filer beat --loglevel=info
+    depends_on:
+      - web
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=news_database
+      - DJANGO_SETTINGS_MODULE=new_filer.settings
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
