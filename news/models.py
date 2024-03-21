@@ -12,6 +12,7 @@ class SearchTerm(models.Model):
         return self.term
 
 
+
 class News(models.Model):
     """
     Model to store news articles.

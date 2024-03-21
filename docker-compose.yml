@@ -1,37 +1,27 @@
-version: '3'
+version: '3.8'
 
 services:
-  # Django web service
-  web:
-    build: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - .:/app
-    depends_on:
-      - db
-      - redis
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=news_database
-      - DJANGO_SETTINGS_MODULE=new_filer.settings
-
-  # PostgreSQL database service
   db:
     image: postgres
-    restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: news_database
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      POSTGRES_DB: django_project
+      POSTGRES_USER: django_project
+      POSTGRES_PASSWORD: password
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
-  # Redis service
+  web:
+    build: .
+    command: bash -c "sleep 10 && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+  
   redis:
     image: redis:latest
     restart: always
@@ -63,3 +53,6 @@ services:
       - DJANGO_SETTINGS_MODULE=new_filer.settings
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+volumes:
+  postgres_data:

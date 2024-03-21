@@ -80,9 +80,9 @@ WSGI_APPLICATION = 'new_filer.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'news_database',  
-        'USER': 'postgres',       
-        'PASSWORD': 'postgres',   
+        'NAME': 'django_project',  
+        'USER': 'django_project',       
+        'PASSWORD': 'password',   
         'HOST': 'db',             
         'PORT': '5432',
     }
